@@ -11,9 +11,6 @@ import java.util.Objects;
 @Slf4j
 public class ServerHandlerService_v2 implements ServerHandler {
 
-    // System.in이 닫히면 JVM이 종료되기 전까지 다시 사용 불가 -> 전역으로 선언
-    private final BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
-
     private final Socket serverSocket;
 
     public ServerHandlerService_v2(Socket socket) {
