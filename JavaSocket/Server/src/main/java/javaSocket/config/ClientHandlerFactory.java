@@ -1,7 +1,7 @@
 package javaSocket.config;
 
 import javaSocket.handler.ClientHandler;
-import javaSocket.handler.ClientHandlerService_v1;
+import javaSocket.handler.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import java.net.Socket;
 public class ClientHandlerFactory {
 
     public ClientHandler create(Socket socket) {
-        ClientHandler clientHandler = new ClientHandlerService_v1(socket);
+        ClientHandler clientHandler = new ClientHandlerService_v2(socket);
         log.info("{} RUN", clientHandler.getClass());
         return clientHandler;
     }
