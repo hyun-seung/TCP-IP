@@ -12,7 +12,7 @@ import java.net.Socket;
 public class ClientHandlerFactory {
 
     public ClientHandler create(Socket socket) {
-        ClientHandler clientHandler = new ClientHandlerService_v3(socket);
+        ClientHandler clientHandler = new ClientHandlerService_v4(socket);
         log.info("{} RUN", clientHandler.getClass());
         return clientHandler;
     }
