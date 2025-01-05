@@ -12,7 +12,7 @@ import java.net.Socket;
 public class ServerHandlerFactory {
 
     public ServerHandler create(Socket socket) {
-        ServerHandler serverHandler = new ServerHandlerService_v2(socket);
+        ServerHandler serverHandler = new ServerHandlerService_v3(socket);
         log.info("{} RUN", serverHandler.getClass());
         return serverHandler;
     }
