@@ -15,9 +15,6 @@ public class StreamUtils {
                 throw new IOException("Stream closed prematurely while reading data");
             }
             bytesRead += result;
-            System.out.println(length);
-            System.out.println(bytesRead);
-            System.out.println();
         }
         return buffer;
     }
