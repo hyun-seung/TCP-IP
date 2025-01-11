@@ -16,6 +16,8 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
 
+import java.nio.charset.StandardCharsets;
+
 @Slf4j
 @Configuration
 public class TcpClientConfig {
@@ -85,8 +87,9 @@ public class TcpClientConfig {
     }
 
     @ServiceActivator(inputChannel = "replyChannel")
-    public Message<String> handleRequest(Message<String> message) {
-        log.info("Received : {}" , message.getPayload());
-        return MessageBuilder.withPayload(message.getPayload()).build();
+    public Message<byte[]> handleRequest(Message<byte[]> message) {
+        byte[] payload = message.getPayload();
+        log.info("Received : {}" , new String(payload, StandardCharsets.UTF_8));
+        return MessageBuilder.withPayload(payload).build();
     }
 }

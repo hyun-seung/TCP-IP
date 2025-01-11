@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import springIntegration.service.TcpClientService;
 
+import java.nio.charset.StandardCharsets;
+
 @Slf4j
 @SpringBootApplication
 public class ClientApplication {
@@ -20,9 +22,9 @@ public class ClientApplication {
         return args -> {
             try {
                 String message = "Hello, Server!";
-                String response = tcpClientService.sendAndReceive(message);
+                byte[] bytes = tcpClientService.sendAndReceive(message.getBytes(StandardCharsets.UTF_8));
 
-                log.info("서버 응답 : " + response);
+                log.info("서버 응답 : " + new String(bytes, StandardCharsets.UTF_8));
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("메시지 송수신 실패");

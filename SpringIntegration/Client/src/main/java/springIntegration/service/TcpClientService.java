@@ -14,14 +14,14 @@ public class TcpClientService {
 
     private final MessagingTemplate messagingTemplate;
 
-    public String sendAndReceive(String message) {
+    public byte[] sendAndReceive(byte[] message) {
         // 요청 메시지 생성
-        Message<String> requestMessage = MessageBuilder.withPayload(message).build();
+        Message<byte[]> requestMessage = MessageBuilder.withPayload(message).build();
 
         // 메시지 송수신
         Message<?> replyMessage = messagingTemplate.sendAndReceive(requestMessage);
         if (replyMessage != null) {
-            return replyMessage.getPayload().toString();
+            return (byte[]) replyMessage.getPayload();
         } else {
             throw new RuntimeException("응답을 받지 못했습니다");
         }
