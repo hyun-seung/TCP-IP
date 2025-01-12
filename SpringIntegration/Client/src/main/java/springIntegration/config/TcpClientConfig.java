@@ -15,6 +15,9 @@ import org.springframework.integration.ip.tcp.serializer.ByteArrayCrLfSerializer
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.MessageBuilder;
+import springIntegration.CustomSerializer;
+import springIntegration.domain.MessageHeader;
+import springIntegration.domain.TextMessage;
 
 import java.nio.charset.StandardCharsets;
 
@@ -28,9 +31,9 @@ public class TcpClientConfig {
         int port = ServerConfig.PORT;
 
         TcpNioClientConnectionFactory factory = new TcpNioClientConnectionFactory(host, port);
-        ByteArrayCrLfSerializer byteArrayCrLfSerializer = new ByteArrayCrLfSerializer();
-        factory.setSerializer(byteArrayCrLfSerializer);         // 서버쪽에서 \r\n을 붙여서 전송해줘야함
-        factory.setDeserializer(byteArrayCrLfSerializer);
+        CustomSerializer customSerializer = new CustomSerializer();
+        factory.setSerializer(customSerializer);
+        factory.setDeserializer(customSerializer);
         factory.setSingleUse(true);                             // true인 경우 매번 생성, false인 경우 커넥션 유지(재사용) , Default : false
         factory.setUsingDirectBuffers(true);                    // 직접 메모리 버퍼 사용 , 힙 메모리 X
         factory.setConnectTimeout(ServerConfig.MAX_TIMEOUT);    // seconds
@@ -87,9 +90,17 @@ public class TcpClientConfig {
     }
 
     @ServiceActivator(inputChannel = "replyChannel")
-    public Message<byte[]> handleRequest(Message<byte[]> message) {
-        byte[] payload = message.getPayload();
-        log.info("Received : {}" , new String(payload, StandardCharsets.UTF_8));
-        return MessageBuilder.withPayload(payload).build();
+    public Message<TextMessage> handleRequest(Message<byte[]> message) {
+        byte[] headerBytes = new byte[48];
+        System.arraycopy(message.getPayload(), 0, headerBytes, 0, 48);
+        MessageHeader messageHeader = MessageHeader.fromBytes(headerBytes);
+        log.info("Received MessageHeader : {}", messageHeader);
+
+        byte[] bodyBytes = new byte[message.getPayload().length - 48];
+        System.arraycopy(message.getPayload(), 48, bodyBytes, 0, bodyBytes.length);
+        String bodyText = new String(bodyBytes, StandardCharsets.UTF_8);
+        log.info("Received Body : {}", bodyText);
+
+        return MessageBuilder.withPayload(new TextMessage(messageHeader, bodyText)).build();
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.integration.core.MessagingTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
+import springIntegration.domain.TextMessage;
 
 @Slf4j
 @Component
@@ -14,14 +15,14 @@ public class TcpClientService {
 
     private final MessagingTemplate messagingTemplate;
 
-    public byte[] sendAndReceive(byte[] message) {
+    public TextMessage sendAndReceive(TextMessage textMessage) {
         // 요청 메시지 생성
-        Message<byte[]> requestMessage = MessageBuilder.withPayload(message).build();
+        Message<byte[]> requestMessage = MessageBuilder.withPayload(textMessage.toBytes()).build();
 
         // 메시지 송수신
         Message<?> replyMessage = messagingTemplate.sendAndReceive(requestMessage);
         if (replyMessage != null) {
-            return (byte[]) replyMessage.getPayload();
+            return (TextMessage) replyMessage.getPayload();
         } else {
             throw new RuntimeException("응답을 받지 못했습니다");
         }
