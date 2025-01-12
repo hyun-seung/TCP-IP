@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Configuration;
 public class NettyClientConfig {
 
     @Bean
-    public NettyClient create() {
-        NettyClient nettyClient = new NettyClientService_v1();
+    public NettyClient create(ServerConfig serverConfig) {
+        NettyClient nettyClient = new NettyClientService_v1(serverConfig);
         log.info("{} running", nettyClient.getClass().getSimpleName());
         return nettyClient;
     }

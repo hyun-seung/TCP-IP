@@ -15,12 +15,18 @@ import netty.handler.ClientHandler;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RequiredArgsConstructor
 public class NettyClientService_v1 implements NettyClient<String> {
 
+    private final ServerConfig serverConfig;
+
     private final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(8);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     private Channel channel;    // 데이터 송수신, 연결 상태 관리
 
@@ -45,14 +51,24 @@ public class NettyClientService_v1 implements NettyClient<String> {
                 .option(ChannelOption.SO_LINGER, 0)
                 .option(ChannelOption.SO_REUSEADDR, true);
 
-        return connectToServer(bootstrap);
+        CompletableFuture<Void> result = new CompletableFuture<>();
+        connectToServer(bootstrap)
+                .whenComplete((res, ex) -> {
+                    if (ex != null) {
+                        result.completeExceptionally(ex);
+                    } else {
+                        result.complete(null);
+                    }
+                });
+
+        return result;
     }
 
     @Override
     public CompletableFuture<Void> connectToServer(Bootstrap bootstrap) {
         CompletableFuture<Void> result = new CompletableFuture<>();
 
-        String host = ServerConfig.HOST;
+        String host = serverConfig.getNextHost();
         int port = ServerConfig.PORT;
         log.info("Attempting to connect to server : {}:{}", host, port);
 
@@ -62,12 +78,23 @@ public class NettyClientService_v1 implements NettyClient<String> {
                         if (future.isSuccess()) {
                             channel = future.channel();
                             log.info("Successfully connected to server : {}:{}", host, port);
+                            serverConfig.clearCurrentRetryCount();
                             result.complete(null);
                         } else {
                             log.warn("Failed connect to server : {}:{}", host, port);
+                            log.warn("Now RetryCount : {} , Retry Delay Time : {}s",
+                                    serverConfig.getCurrentRetryCount(), serverConfig.getRetryTime());
+                            scheduler.schedule(() ->
+                                    connectToServer(bootstrap)
+                                            .whenComplete((res, ex) -> {
+                                                if (ex != null) {
+                                                    result.completeExceptionally(ex);
+                                                } else {
+                                                    result.complete(null);
+                                                }
+                                            }), serverConfig.getRetryTime(), TimeUnit.SECONDS);
                         }
                     });
-            channelFuture.sync();   // 연결이 완료될 때까지 현재 스레드 차단
         } catch (Exception e) {
             result.completeExceptionally(e);
         }
@@ -118,7 +145,6 @@ public class NettyClientService_v1 implements NettyClient<String> {
 
         return result;
     }
-
 
     private void shutdownEventLoopGroup(CompletableFuture<Void> result) {
         try {

@@ -19,7 +19,7 @@ public class ClientApplication {
     CommandLineRunner commandLineRunner(NettyClient nettyClient) {
         return args -> {
             try {
-                nettyClient.connect();
+//                nettyClient.connect();
 
                 String msg = "Hello Server!";
                 nettyClient.sendMessage(msg);
