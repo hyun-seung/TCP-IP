@@ -30,7 +30,8 @@ public class NettyServer_v3 implements NettyServer {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline pipeline = socketChannel.pipeline();
-                            pipeline.addLast(new ByteBufToByteArrayDecoder());
+//                            pipeline.addLast(new ByteBufToByteArrayDecoder());
+                            pipeline.addLast(new ByteArrayDecoder());
                             pipeline.addLast(new TextMessageByteArrayHandler());
                         }
                     });
