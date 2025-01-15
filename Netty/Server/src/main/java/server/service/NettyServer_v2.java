@@ -31,19 +31,22 @@ public class NettyServer_v2 implements NettyServer {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline pipeline = socketChannel.pipeline();
-                            pipeline.addLast(new ByteBufToByteArrayDecoder());
-                            pipeline.addLast(new SimpleChannelInboundHandler<byte[]>() {
-                                @Override
-                                protected void channelRead0(ChannelHandlerContext channelHandlerContext, byte[] bytes) throws Exception {
-                                    String received = new String(bytes, StandardCharsets.UTF_8);
-                                    log.info("Received : {}", received);
-
-                                    String response = "Echo - " + received;
-                                    channelHandlerContext.writeAndFlush(
-                                            Unpooled.wrappedBuffer(response.getBytes(StandardCharsets.UTF_8))
-                                    );
-                                }
-                            });
+                            pipeline.addLast(new StringDecoder());
+                            pipeline.addLast(new StringEncoder());
+                            pipeline.addLast(new NettyServerHandler());
+//                            pipeline.addLast(new ByteBufToByteArrayDecoder());
+//                            pipeline.addLast(new SimpleChannelInboundHandler<byte[]>() {
+//                                @Override
+//                                protected void channelRead0(ChannelHandlerContext channelHandlerContext, byte[] bytes) throws Exception {
+//                                    String received = new String(bytes, StandardCharsets.UTF_8);
+//                                    log.info("Received : {}", received);
+//
+//                                    String response = "Echo - " + received;
+//                                    channelHandlerContext.writeAndFlush(
+//                                            Unpooled.wrappedBuffer(response.getBytes(StandardCharsets.UTF_8))
+//                                    );
+//                                }
+//                            });
                         }
                     });
 
