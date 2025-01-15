@@ -7,6 +7,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.nio.charset.StandardCharsets;
+
 @Slf4j
 @SpringBootApplication
 public class ClientApplication {
@@ -22,7 +24,7 @@ public class ClientApplication {
 //                nettyClient.connect();
 
                 String msg = "Hello Server!";
-                nettyClient.sendMessage(msg);
+                nettyClient.sendMessage(msg.getBytes(StandardCharsets.UTF_8));
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("메시지 송수신 실패");

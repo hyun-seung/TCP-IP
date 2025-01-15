@@ -3,6 +3,7 @@ package netty.config;
 import lombok.extern.slf4j.Slf4j;
 import netty.service.NettyClient;
 import netty.service.NettyClientService_v1;
+import netty.service.NettyClientService_v2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,7 +13,7 @@ public class NettyClientConfig {
 
     @Bean
     public NettyClient create(ServerConfig serverConfig) {
-        NettyClient nettyClient = new NettyClientService_v1(serverConfig);
+        NettyClient nettyClient = new NettyClientService_v2(serverConfig);
         log.info("{} running", nettyClient.getClass().getSimpleName());
         return nettyClient;
     }
