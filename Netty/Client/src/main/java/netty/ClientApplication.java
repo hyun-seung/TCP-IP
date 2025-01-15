@@ -1,6 +1,8 @@
 package netty;
 
 import lombok.extern.slf4j.Slf4j;
+import netty.domain.TextMessage;
+import netty.domain.common.CommandId;
 import netty.service.NettyClient;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -24,7 +26,8 @@ public class ClientApplication {
 //                nettyClient.connect();
 
                 String msg = "Hello Server!";
-                nettyClient.sendMessage(msg.getBytes(StandardCharsets.UTF_8));
+                TextMessage textMessage = new TextMessage(CommandId.REQ, "20251852-1-msg", msg);
+                nettyClient.sendMessage(textMessage);
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("메시지 송수신 실패");
