@@ -11,8 +11,8 @@ import reactorNetty.service.NettyClient_v1;
 public class ReactorNettyConfig {
 
     @Bean
-    public NettyClient create() {
-        NettyClient nettyClient = new NettyClient_v1();
+    public NettyClient create(ServerConfig serverConfig) {
+        NettyClient nettyClient = new NettyClient_v1(serverConfig);
         log.info("{} running", nettyClient.getClass().getSimpleName());
         return nettyClient;
     }
