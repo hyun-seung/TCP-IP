@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactorNetty.service.NettyClient;
 import reactorNetty.service.NettyClient_v1;
+import reactorNetty.service.NettyClient_v2;
 
 @Slf4j
 @Configuration
@@ -12,7 +13,7 @@ public class ReactorNettyConfig {
 
     @Bean
     public NettyClient create(ServerConfig serverConfig) {
-        NettyClient nettyClient = new NettyClient_v1(serverConfig);
+        NettyClient nettyClient = new NettyClient_v2(serverConfig);
         log.info("{} running", nettyClient.getClass().getSimpleName());
         return nettyClient;
     }

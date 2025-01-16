@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import reactorNetty.service.NettyClient;
 
+import java.nio.charset.StandardCharsets;
+
 @Slf4j
 @SpringBootApplication
 public class ClientApplication {
@@ -19,7 +21,7 @@ public class ClientApplication {
     CommandLineRunner commandLineRunner(NettyClient nettyClient) {
         return args -> {
             String msg = "Hello Server!";
-            nettyClient.sendMessage(msg);
+            nettyClient.sendMessage(msg.getBytes(StandardCharsets.UTF_8));
         };
     }
 }
