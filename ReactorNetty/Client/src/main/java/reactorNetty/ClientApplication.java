@@ -5,6 +5,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import reactorNetty.domain.TextMessage;
+import reactorNetty.domain.common.CommandId;
 import reactorNetty.service.NettyClient;
 
 import java.nio.charset.StandardCharsets;
@@ -21,7 +23,8 @@ public class ClientApplication {
     CommandLineRunner commandLineRunner(NettyClient nettyClient) {
         return args -> {
             String msg = "Hello Server!";
-            nettyClient.sendMessage(msg.getBytes(StandardCharsets.UTF_8));
+            TextMessage textMessage = new TextMessage(CommandId.REQ, "202501171744-1-msg", msg);
+            nettyClient.sendMessage(textMessage);
         };
     }
 }
